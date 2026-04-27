@@ -1,0 +1,2811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#0B3B5C" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<title>Patient Intake — Powered by Nirvana</title>
+<meta name="description" content="A walkthrough of how a first-time patient books a visit — powered by Nirvana." />
+<meta property="og:title" content="Patient Intake — Powered by Nirvana" />
+<meta property="og:description" content="A walkthrough of how a first-time patient books a visit — powered by Nirvana." />
+<meta property="og:type" content="website" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* ========================================================
+       NIRVANA BRAND PALETTE
+       Source: Nirvana Brand Guidelines (2023)
+       --------------------------------------------------------
+       Variable names are kept from the prior Group XYZ build
+       so the existing CSS rules continue to apply. Only the
+       VALUES are remapped to Nirvana's official brand colors.
+       ======================================================== */
+
+    /* Primary anchor — Nirvana Deep Purple. Used wherever
+       the previous build used "navy" (headers, dark cards,
+       bottom CTA). */
+    --ts-navy: #2F1D47;
+    --ts-navy-deep: #2F1D47;
+
+    /* Accent — Nirvana Vibrant Purple. Used wherever the
+       previous build used "teal" (success states, in-network
+       confirmations, hover and focus rings). */
+    --ts-teal: #9273F4;
+    --ts-teal-soft: #ECE5FB;
+
+    /* Wordmark color (Nirvana navy from the lockup). */
+    --ts-olive: #1A2A44;
+
+    /* Highlight — Lilac. Used wherever the previous build
+       used "gold" (TAP HERE pulse, primary scheduling CTA,
+       stat highlights). */
+    --ts-gold: #AE9BEA;
+
+    /* Surfaces — off-white & warm tones from the brand kit. */
+    --ts-cream: #F5F0EC;          /* Off White */
+    --ts-cream-2: #DCD2C8;        /* Warm Light */
+    --ts-ink: #2F1D47;            /* Body text — Deep Purple */
+    --ts-ink-soft: #5A4F6A;       /* Secondary text */
+    --ts-ink-muted: #AD9D92;      /* Warm Shadow — captions, meta */
+    --ts-line: #DCD2C8;           /* Hairlines & dividers */
+    --ts-line-soft: #ECE5DD;      /* Softer dividers */
+    --ts-success: #4F7A5A;        /* Success — kept conservative */
+    --ts-success-soft: #DDEAE0;
+    --nirvana-purple: #9273F4;
+    --nirvana-purple-deep: #2F1D47;
+    /* ============================================================
+       BRAND LOGO — single source of truth for the provider mark.
+       This is the only thing you need to swap when re-skinning
+       this prototype for a new prospect. Replace the data URI
+       below with the prospect's logo (PNG, SVG, or external URL).
+       Aspect ratio target: roughly 300:160 (wide rectangle).
+       ============================================================ */
+    --brand-logo-url: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20240%20100%22%20preserveAspectRatio%3D%22xMidYMid%20meet%22%3E%0A%20%20%3Cg%3E%0A%20%20%20%20%3C%21--%20Mark%3A%20deep%20purple%20ring%20%2B%20lilac%20inner%20--%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2232%22%20cy%3D%2250%22%20r%3D%2222%22%20fill%3D%22none%22%20stroke%3D%22%232F1D47%22%20stroke-width%3D%225%22/%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2232%22%20cy%3D%2250%22%20r%3D%2210%22%20fill%3D%22%239273F4%22/%3E%0A%20%20%20%20%3C%21--%20Wordmark%3A%20Group%20XYZ%20--%3E%0A%20%20%20%20%3Ctext%20x%3D%2268%22%20y%3D%2246%22%20font-family%3D%22DM%20Sans%2C%20sans-serif%22%20font-weight%3D%22700%22%20font-size%3D%2224%22%20letter-spacing%3D%22-0.5%22%20fill%3D%22%232F1D47%22%3EGroup%3C/text%3E%0A%20%20%20%20%3Ctext%20x%3D%2268%22%20y%3D%2274%22%20font-family%3D%22DM%20Sans%2C%20sans-serif%22%20font-weight%3D%22500%22%20font-size%3D%2218%22%20letter-spacing%3D%223%22%20fill%3D%22%235A4F6A%22%3EXYZ%3C/text%3E%0A%20%20%3C/g%3E%0A%3C/svg%3E");
+
+    /* Stacked / centered variant — lens mark above wordmark.
+       Used in spots where the logo needs to read as a centered
+       medallion (e.g. inside the verifying spinner orb). Swap
+       at the same time as --brand-logo-url to keep brands aligned. */
+    --brand-logo-stacked: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20200%20180%22%20preserveAspectRatio%3D%22xMidYMid%20meet%22%3E%0A%20%20%3Cg%3E%0A%20%20%20%20%3C%21--%20Lens%20mark%2C%20centered%20horizontally%2C%20top%20half%20--%3E%0A%20%20%20%20%3Ccircle%20cx%3D%22100%22%20cy%3D%2255%22%20r%3D%2228%22%20fill%3D%22none%22%20stroke%3D%22%232F1D47%22%20stroke-width%3D%226%22/%3E%0A%20%20%20%20%3Ccircle%20cx%3D%22100%22%20cy%3D%2255%22%20r%3D%2213%22%20fill%3D%22%239273F4%22/%3E%0A%20%20%20%20%3C%21--%20Wordmark%3A%20Group%20XYZ%2C%20centered%20horizontally%2C%20bottom%20half%20--%3E%0A%20%20%20%20%3Ctext%20x%3D%22100%22%20y%3D%22125%22%20text-anchor%3D%22middle%22%20font-family%3D%22DM%20Sans%2C%20sans-serif%22%20font-weight%3D%22700%22%20font-size%3D%2226%22%20letter-spacing%3D%22-0.5%22%20fill%3D%22%232F1D47%22%3EGroup%3C/text%3E%0A%20%20%20%20%3Ctext%20x%3D%22100%22%20y%3D%22155%22%20text-anchor%3D%22middle%22%20font-family%3D%22DM%20Sans%2C%20sans-serif%22%20font-weight%3D%22500%22%20font-size%3D%2220%22%20letter-spacing%3D%223%22%20fill%3D%22%235A4F6A%22%3EXYZ%3C/text%3E%0A%20%20%3C/g%3E%0A%3C/svg%3E");
+
+    /* Legacy alias — kept so existing rules using --ts-logo-url
+       continue to render. Both names point to the same asset. */
+    --ts-logo-url: var(--brand-logo-url);
+    --serif: 'DM Sans', system-ui, -apple-system, sans-serif;
+    --sans: 'DM Sans', system-ui, -apple-system, sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; }
+  body {
+    font-family: var(--sans);
+    background: var(--ts-cream);
+    color: var(--ts-ink);
+    position: relative;
+    overscroll-behavior: none;
+  }
+
+  .app-root {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    background: linear-gradient(180deg, #2F1D47 0%, #4A356B 45%, #DCD2C8 100%);
+    overflow: hidden;
+    padding: 18px 16px 24px;
+    gap: 14px;
+  }
+  /* Phone chassis — dark bezel, rounded corners, status bar */
+  .phone-chassis {
+    position: relative;
+    width: 100%;
+    max-width: 372px;
+    flex: 1;
+    min-height: 0;
+    max-height: 806px;
+    aspect-ratio: 9 / 19.5;
+    background: #0d0a08;
+    border-radius: 48px;
+    padding: 7px;
+    box-shadow:
+      0 0 0 1.5px #2a211b,
+      0 0 0 2.5px #0a0604,
+      0 22px 55px rgba(0, 0, 0, 0.38),
+      0 10px 24px rgba(0, 0, 0, 0.22);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  /* iOS-like inner screen */
+  .phone-screen {
+    position: relative;
+    flex: 1;
+    border-radius: 42px;
+    background: var(--ts-cream);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  /* Dynamic island */
+  .phone-island {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 104px;
+    height: 28px;
+    background: #000;
+    border-radius: 18px;
+    z-index: 200;
+    pointer-events: none;
+  }
+  /* iOS status bar (time + battery/signal) */
+  .phone-status-bar {
+    padding: 14px 28px 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ts-ink);
+    flex-shrink: 0;
+    z-index: 100;
+    height: 44px;
+  }
+  .phone-status-icons {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+  }
+  /* Make phone chassis fill viewport on small devices */
+  @media (max-width: 440px) {
+    .app-root { padding: 0; }
+    .phone-chassis {
+      max-width: 100%;
+      max-height: 100%;
+      height: 100%;
+      aspect-ratio: auto;
+      border-radius: 0;
+      padding: 0;
+      box-shadow: none;
+    }
+    .phone-screen { border-radius: 0; }
+    .phone-island { display: none; }
+    .phone-status-bar { display: none; }
+  }
+
+  /* ============ TOP PROGRESS BAR (sits above phone chassis) ============ */
+  .progress-wrap {
+    position: relative;
+    z-index: 100;
+    width: 100%;
+    max-width: 400px;
+    padding: 6px 4px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .back-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #fff;
+    border: 1px solid rgba(245, 240, 236, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ts-navy-deep);
+    cursor: pointer;
+    flex-shrink: 0;
+    padding: 0;
+    transition: opacity 0.2s, visibility 0s;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  }
+  .back-btn.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+  .progress-label {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 12px;
+    color: rgba(245, 240, 236, 0.85);
+    white-space: nowrap;
+    font-weight: 500;
+    max-width: 160px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .progress-track {
+    flex: 1;
+    height: 3px;
+    background: rgba(245, 240, 236, 0.18);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--ts-gold);
+    border-radius: 2px;
+    transition: width 0.5s ease;
+    width: 10%;
+  }
+  .progress-count {
+    font-size: 10px;
+    color: rgba(245, 240, 236, 0.7);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+  }
+
+  /* Screen stage */
+  .screen-stage {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+  .screen {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(20px);
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0s linear 0.3s;
+    background: var(--ts-cream);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .screen.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0s linear 0s;
+  }
+  .screen.back-exit {
+    transform: translateX(20px);
+  }
+
+  /* ============ TAP HIGHLIGHT ============ */
+  .tap-target {
+    position: relative;
+    cursor: pointer;
+  }
+  .tap-target::before {
+    content: '';
+    position: absolute;
+    inset: -6px;
+    border-radius: 12px;
+    background: rgba(232, 163, 61, 0.15);
+    border: 2px solid var(--ts-gold);
+    animation: tapPulse 1.6s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 4;
+  }
+  @keyframes tapPulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.45; transform: scale(1.04); }
+  }
+  .tap-hint {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--ts-gold);
+    color: var(--ts-navy-deep);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 5px 11px;
+    border-radius: 999px;
+    white-space: nowrap;
+    box-shadow: 0 4px 10px rgba(232, 163, 61, 0.35);
+    z-index: 5;
+    pointer-events: none;
+    animation: tapHintFloat 1.6s ease-in-out infinite;
+  }
+  .tap-hint::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 5px solid var(--ts-gold);
+  }
+  @keyframes tapHintFloat {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(-3px); }
+  }
+
+  /* ============ CAPTION ============ */
+  .caption-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(14, 49, 82, 0);
+    pointer-events: none;
+    transition: background 0.3s ease;
+    z-index: 199;
+    border-radius: 36px;
+  }
+  .caption-backdrop.visible {
+    background: rgba(14, 49, 82, 0.15);
+    pointer-events: auto;
+  }
+  .caption {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--ts-navy-deep);
+    color: #fff;
+    padding: 14px 20px 20px;
+    transform: translateY(calc(100% + 40px));
+    transition: transform 0.35s cubic-bezier(0.25, 0.8, 0.3, 1);
+    z-index: 200;
+    border-radius: 18px 18px 0 0;
+    box-shadow: 0 -10px 30px rgba(7, 40, 68, 0.3);
+    touch-action: none;
+  }
+  /* On mobile, caption has safe-area padding */
+  @media (max-width: 440px) {
+    .caption {
+      padding-bottom: calc(20px + env(safe-area-inset-bottom, 0));
+    }
+    .caption-backdrop {
+      border-radius: 0;
+    }
+  }
+  .caption.visible {
+    transform: translateY(0);
+  }
+  .caption-handle {
+    width: 36px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 2px;
+    margin: 0 auto 10px;
+    cursor: grab;
+  }
+  .caption-step {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 13px;
+    color: var(--ts-gold);
+    letter-spacing: 0.02em;
+    margin-bottom: 4px;
+    font-weight: 500;
+  }
+  .caption-body {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.92);
+    line-height: 1.5;
+  }
+  .caption-progress {
+    height: 2px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 1px;
+    overflow: hidden;
+    margin-top: 12px;
+  }
+  .caption-progress-fill {
+    height: 100%;
+    background: var(--ts-gold);
+    width: 0;
+    transition: width 0.6s linear;
+  }
+  .caption.visible .caption-progress-fill {
+    width: 100%;
+  }
+  .caption.minimized {
+    transform: translateY(calc(100% - 42px));
+  }
+  .caption.minimized .caption-body,
+  .caption.minimized .caption-progress {
+    opacity: 0;
+  }
+
+  /* ============ INTRO ============ */
+  .intro {
+    position: absolute;
+    inset: 0;
+    background: var(--ts-cream);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 28px;
+    text-align: center;
+    transition: opacity 0.4s ease, visibility 0s linear 0.4s;
+    border-radius: 36px;
+  }
+  @media (max-width: 440px) {
+    .intro { border-radius: 0; }
+  }
+  .intro.hidden { opacity: 0; visibility: hidden; }
+
+  .intro-logos {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    margin-bottom: 28px;
+    padding: 18px 28px;
+    background: #ffffff;
+    border: 1px solid var(--ts-line);
+    border-radius: 999px;
+    box-shadow: 0 1px 3px rgba(7, 40, 68, 0.04);
+  }
+  .intro-logos-sep {
+    color: #C5BCAA;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1;
+  }
+
+  .intro-eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ts-ink-muted);
+    margin-bottom: 18px;
+  }
+  .intro-h {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 28px;
+    color: var(--ts-navy-deep);
+    letter-spacing: -0.025em;
+    line-height: 1.05;
+    margin-bottom: 14px;
+  }
+  .intro-sub {
+    font-size: 13px;
+    color: var(--ts-ink-soft);
+    line-height: 1.55;
+    max-width: 280px;
+    margin-bottom: 28px;
+  }
+  .intro-btn {
+    background: var(--ts-navy-deep);
+    color: #fff;
+    border: none;
+    padding: 15px 36px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: var(--sans);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 14px rgba(7, 40, 68, 0.2);
+  }
+  .intro-foot {
+    margin-top: 40px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 10px;
+    color: var(--ts-ink-muted);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  .intro-foot-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--ts-teal);
+  }
+
+
+  /* Logo images (real brand assets embedded as PNG) */
+  .ts-logo-img {
+    height: 72px;
+    aspect-ratio: 240 / 100;
+    background: var(--ts-logo-url) no-repeat center / contain;
+    flex-shrink: 0;
+  }
+  .ts-logo-img.small { height: 56px; }
+  .ts-logo-img.lg { height: 84px; }
+  .verify-ring-inner-img {
+    /* Square footprint so the centered/stacked logo sits dead-center in the orb. */
+    width: 130px;
+    height: 117px;
+    aspect-ratio: 200 / 180;
+    background: var(--brand-logo-stacked) no-repeat center / contain;
+  }
+  .nirvana-logo-img {
+    height: 20px;
+    aspect-ratio: 300 / 54;
+    background: url("data:image/png;base64,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") no-repeat center / contain;
+    flex-shrink: 0;
+  }
+  .nirvana-logo-img.lg { height: 19px; }
+  /* Default Nirvana size override — keeps "Powered by nirvana" footer proportional to Group XYZ */
+  .home-powered .nirvana-logo-img { height: 15px; }
+
+  /* ============ LEGACY SVG LOGO RULES (unused — kept for layout safety) ============ */
+  .ts-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+  }
+  .ts-logo-mark {
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+  }
+  .ts-logo-text-wrap { display: flex; flex-direction: column; line-height: 1; }
+  .ts-logo-name {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 18px;
+    color: var(--ts-olive);
+    letter-spacing: -0.01em;
+  }
+  .ts-logo-tag {
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 8.5px;
+    color: var(--ts-navy-deep);
+    letter-spacing: 0.18em;
+    margin-top: 2px;
+  }
+  .ts-logo.lg .ts-logo-mark { width: 48px; height: 48px; }
+  .ts-logo.lg .ts-logo-name { font-size: 21px; }
+  .ts-logo.lg .ts-logo-tag { font-size: 10px; letter-spacing: 0.2em; }
+
+  /* ============ NIRVANA LOGO — real pinwheel + navy wordmark ============ */
+  .nirvana-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 15px;
+    color: #1A2A44;
+    letter-spacing: -0.01em;
+  }
+  .nirvana-mark {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+  }
+  .nirvana-logo.lg { font-size: 22px; gap: 9px; }
+  .nirvana-logo.lg .nirvana-mark { width: 26px; height: 26px; }
+
+  /* ============ BROWSER CHROME — iOS Safari style ============ */
+  .browser-bar {
+    background: rgba(243, 239, 230, 0.85);
+    backdrop-filter: blur(12px);
+    padding: 6px 16px 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .browser-dots { display: none; }
+  .browser-dot { display: none; }
+  .browser-url {
+    flex: 1;
+    height: 32px;
+    background: rgba(118, 118, 128, 0.12);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 10px;
+    font-size: 13px;
+    color: var(--ts-ink);
+    font-weight: 400;
+  }
+  .browser-url svg { width: 10px; height: 10px; margin-right: 6px; color: var(--ts-ink-soft); flex-shrink: 0; }
+
+  .page-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: var(--ts-cream);
+    min-height: 0;
+  }
+  .page-header {
+    padding: 18px 20px 14px;
+    flex-shrink: 0;
+  }
+
+  /* ============ SCREEN 1: HOMEPAGE ============ */
+  .home-nav-top {
+    background: #F7F2E7;
+    padding: 8px 14px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 9px;
+    color: var(--ts-ink-soft);
+    border-bottom: 1px solid var(--ts-line);
+    flex-shrink: 0;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .home-nav-top-left { display: flex; gap: 8px; }
+  .home-nav-main {
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #fff;
+    flex-shrink: 0;
+  }
+  .home-req-btn {
+    background: var(--ts-navy-deep);
+    color: #fff;
+    padding: 9px 12px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: 600;
+    text-align: center;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+  .home-hero {
+    position: relative;
+    background: linear-gradient(135deg, #F5F0EC 0%, #ECE5FB 45%, #DCD2C8 100%);
+    padding: 26px 24px 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+    flex: 1;
+    min-height: 220px;
+  }
+  .home-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 80% 20%, rgba(28, 138, 158, 0.14) 0%, transparent 55%),
+      radial-gradient(circle at 15% 90%, rgba(232, 163, 61, 0.10) 0%, transparent 50%);
+  }
+  .home-hero-h {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 28px;
+    color: var(--ts-navy-deep);
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    margin-bottom: 6px;
+    position: relative;
+  }
+  .home-hero-sub {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 15px;
+    color: #5A4F6A;
+    line-height: 1.3;
+    max-width: 280px;
+    position: relative;
+    margin-bottom: 14px;
+  }
+  .home-hero-rule {
+    width: 55px;
+    height: 2px;
+    background: var(--ts-gold);
+    margin-bottom: 18px;
+    position: relative;
+  }
+  .home-hero-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    position: relative;
+  }
+  .home-hero-stat-num {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 19px;
+    color: var(--ts-navy-deep);
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+    margin-bottom: 4px;
+    white-space: nowrap;
+  }
+  .home-hero-stat-label {
+    font-size: 12px;
+    color: var(--ts-ink);
+    line-height: 1.3;
+  }
+  .home-ctas {
+    padding: 12px 14px 10px;
+    display: flex;
+    gap: 7px;
+    background: #fff;
+    flex-shrink: 0;
+  }
+  .home-cta {
+    flex: 1;
+    background: var(--ts-navy-deep);
+    color: #fff;
+    height: 46px;
+    padding: 0 6px;
+    border-radius: 3px;
+    font-size: 10.5px;
+    font-weight: 600;
+    text-align: center;
+    line-height: 1.2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .home-powered {
+    padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: #fff;
+    border-top: 1px solid var(--ts-line);
+    flex-shrink: 0;
+  }
+  .powered-label {
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ts-ink-muted);
+  }
+
+  /* ============ BOOKING BODY ============ */
+  .book-body {
+    flex: 1;
+    padding: 10px 22px 20px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    min-height: 0;
+  }
+  .step-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ts-ink-muted);
+    margin-bottom: 12px;
+  }
+  .page-h {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 30px;
+    line-height: 1.1;
+    color: var(--ts-navy-deep);
+    letter-spacing: -0.025em;
+    margin-bottom: 10px;
+  }
+  .page-h em { font-style: italic; color: var(--ts-teal); }
+  .page-sub {
+    font-size: 14px;
+    color: var(--ts-ink-soft);
+    line-height: 1.5;
+    margin-bottom: 24px;
+  }
+  .input-field {
+    width: 100%;
+    height: 54px;
+    background: #fff;
+    border: 1.5px solid var(--ts-navy-deep);
+    border-radius: 12px;
+    padding: 0 18px;
+    font-size: 16px;
+    font-family: var(--sans);
+    color: var(--ts-ink);
+    box-shadow: 0 0 0 3px rgba(11, 59, 92, 0.05);
+    margin-bottom: 14px;
+  }
+  .pri-btn {
+    width: 100%;
+    height: 52px;
+    background: var(--ts-navy-deep);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: var(--sans);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+  .sec-btn {
+    width: 100%;
+    height: 48px;
+    background: #fff;
+    color: var(--ts-navy-deep);
+    border: 1.5px solid var(--ts-line);
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: var(--sans);
+    margin-top: 10px;
+  }
+
+  .fineprint {
+    font-size: 12px;
+    color: var(--ts-ink-muted);
+    line-height: 1.55;
+    margin-top: 18px;
+  }
+  .fineprint a { color: var(--ts-navy-deep); text-decoration: underline; }
+
+  .signin-line {
+    margin-top: 24px;
+    font-size: 14px;
+    color: var(--ts-ink);
+    font-weight: 500;
+  }
+  .signin-line a { color: var(--ts-teal); text-decoration: none; font-weight: 600; }
+
+  .powered-bar {
+    padding: 12px 22px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex-shrink: 0;
+    margin-top: auto;
+  }
+  .powered-bar.with-border {
+    border-top: 1px solid var(--ts-line-soft);
+    margin-top: 0;
+  }
+
+  /* ============ SCREEN 3: OTP with iMessage autofill ============ */
+  .otp-container {
+    position: relative;
+    margin-bottom: 24px;
+  }
+  .otp-row {
+    display: flex;
+    gap: 6px;
+  }
+  .otp-box {
+    flex: 1;
+    aspect-ratio: 0.95;
+    background: #fff;
+    border: 1.5px solid var(--ts-line);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--ts-navy-deep);
+    transition: all 0.3s ease;
+  }
+  .otp-box.active {
+    border-color: var(--ts-navy-deep);
+    box-shadow: 0 0 0 3px rgba(11, 59, 92, 0.08);
+  }
+  .otp-box.filled {
+    background: #fff;
+    border-color: var(--ts-navy-deep);
+  }
+
+  /* iMessage-style suggestion bubble */
+  .imsg-bubble {
+    position: absolute;
+    top: calc(100% - 18px);
+    left: 0;
+    background: #007AFF;
+    color: #fff;
+    padding: 10px 14px 10px 38px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: -apple-system, system-ui, var(--sans);
+    box-shadow: 0 4px 14px rgba(0, 122, 255, 0.28);
+    cursor: pointer;
+    z-index: 10;
+    white-space: nowrap;
+    animation: bubbleSlide 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    line-height: 1.3;
+  }
+  /* Override tap-hint positioning for iMessage bubble - anchor to bubble (not page center) */
+  #tap3a .tap-hint {
+    left: auto;
+    right: 0;
+    transform: none;
+  }
+  #tap3a .tap-hint::before {
+    left: auto;
+    right: 18px;
+    transform: none;
+  }
+  .imsg-bubble.hidden {
+    display: none;
+  }
+  .imsg-bubble::before {
+    content: '';
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    border-radius: 5px;
+    background: #fff;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><defs><linearGradient id='g' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='%2370E374'/><stop offset='1' stop-color='%2334B234'/></linearGradient></defs><path d='M12 3c-5 0-9 3.2-9 7.3 0 2 1 3.9 2.6 5.2l-.8 2.8c-.1.3.2.5.5.4l3.1-1.3c1.2.4 2.4.6 3.6.6 5 0 9-3.2 9-7.3S17 3 12 3z' fill='url(%23g)'/><path d='M12 3c-5 0-9 3.2-9 7.3 0 2 1 3.9 2.6 5.2l-.8 2.8c-.1.3.2.5.5.4l3.1-1.3c1.2.4 2.4.6 3.6.6 5 0 9-3.2 9-7.3S17 3 12 3z' fill='%2330A24A'/></svg>");
+    background-size: 20px 20px;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+  .imsg-bubble .imsg-line1 {
+    font-weight: 600;
+    font-size: 13px;
+  }
+  .imsg-bubble .imsg-line2 {
+    font-size: 11px;
+    opacity: 0.85;
+    margin-top: 1px;
+  }
+  @keyframes bubbleSlide {
+    0% { transform: translateY(6px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+  }
+
+  .otp-continue-black {
+    width: 100%;
+    height: 52px;
+    background: var(--ts-navy-deep);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: var(--sans);
+  }
+  .otp-continue-black.inactive {
+    background: #D6D0C1;
+    color: #9A8F82;
+  }
+
+  /* ============ SCREEN 4: ID card ============ */
+  .id-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 16px 16px;
+    margin-bottom: 22px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .id-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--ts-navy-deep);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--serif);
+    font-size: 16px;
+    font-weight: 500;
+    flex-shrink: 0;
+    letter-spacing: 0.01em;
+  }
+  .id-info-wrap { min-width: 0; flex: 1; }
+  .id-info-name {
+    font-family: var(--serif);
+    font-size: 15.5px;
+    font-weight: 500;
+    color: var(--ts-navy-deep);
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .id-info-dob {
+    font-family: var(--serif);
+    font-size: 11.5px;
+    color: var(--ts-teal);
+    margin-top: 2px;
+    font-weight: 400;
+    line-height: 1.3;
+    white-space: nowrap;
+  }
+  .id-verified {
+    margin-left: auto;
+    font-size: 9.5px;
+    color: var(--ts-success);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .field-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ts-ink-soft);
+    margin-bottom: 10px;
+    display: block;
+  }
+  .select-box {
+    width: 100%;
+    height: 54px;
+    background: #fff;
+    border: 1.5px solid var(--ts-line);
+    border-radius: 12px;
+    padding: 0 18px;
+    font-size: 16px;
+    font-family: var(--sans);
+    color: var(--ts-ink);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .referral-chip {
+    background: var(--ts-teal-soft);
+    border-radius: 10px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+  .referral-chip-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--ts-teal);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .referral-chip-text { font-size: 13px; color: var(--ts-ink); }
+  .referral-chip-text strong { font-weight: 700; color: var(--ts-navy-deep); }
+
+  /* ============ SCREEN 5: Verifying ============ */
+  .verify-wrap {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 24px 60px;
+    min-height: 0;
+  }
+  .verify-ring-wrap {
+    width: 180px;
+    height: 180px;
+    position: relative;
+    margin-bottom: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .verify-ring {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 2px solid var(--ts-line);
+    animation: ts-spin 2.2s linear infinite;
+  }
+  .verify-ring::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    border-top-color: var(--ts-teal);
+    border-right-color: var(--ts-teal);
+  }
+  @keyframes ts-spin { to { transform: rotate(360deg); } }
+  .verify-ring-inner { width: 84px; height: 84px; }
+    .verify-h {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 28px;
+    color: var(--ts-navy-deep);
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+    text-align: center;
+  }
+  .verify-sub {
+    font-size: 14px;
+    color: var(--ts-ink-soft);
+    line-height: 1.5;
+    text-align: center;
+    max-width: 300px;
+  }
+
+  /* ============ SCREEN 6: Coverage result ============ */
+  .cov-hero {
+    background: var(--ts-navy-deep);
+    border-radius: 14px;
+    padding: 14px 18px 16px;
+    color: #fff;
+    margin-bottom: 14px;
+    position: relative;
+    overflow: hidden;
+  }
+  .cov-hero::before {
+    content: '';
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(28, 138, 158, 0.38) 0%, transparent 70%);
+  }
+  .cov-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #B6E4C5;
+    margin-bottom: 6px;
+    position: relative;
+  }
+  .cov-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: #4BC46A; }
+  .cov-h {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 22px;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    margin-bottom: 4px;
+    position: relative;
+  }
+  .cov-h em { font-style: italic; color: #AE9BEA; font-weight: 400; }
+  .cov-sub {
+    font-size: 12.5px;
+    color: rgba(255, 255, 255, 0.72);
+    position: relative;
+    line-height: 1.4;
+  }
+  .info-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 4px 0;
+    margin-bottom: 22px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .info-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+  }
+  .info-row + .info-row {
+    border-top: 1px solid var(--ts-line-soft);
+  }
+  .info-icon {
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ts-teal);
+    flex-shrink: 0;
+  }
+  .info-text {
+    font-size: 14px;
+    color: var(--ts-ink);
+    line-height: 1.35;
+    flex: 1;
+  }
+  .info-text strong { font-weight: 700; color: var(--ts-navy-deep); }
+  .info-label { color: var(--ts-teal); font-weight: 500; }
+  .active-chip {
+    background: var(--ts-success-soft);
+    color: var(--ts-success);
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 3px 9px 3px 8px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+    margin-left: auto;
+  }
+  .active-chip-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--ts-success);
+    box-shadow: 0 0 0 2px rgba(47, 122, 74, 0.15);
+    flex-shrink: 0;
+  }
+  .info-text-multi { flex: 1; min-width: 0; }
+  .info-payer-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .info-payer-row .info-text { flex: none; }
+  .info-payer-row .active-chip { margin-left: 0; }
+  .info-text-sub {
+    font-size: 12.5px;
+    color: var(--ts-ink-soft);
+    margin-top: 2px;
+  }
+
+  /* ============ SCREEN 7: Schedule ============ */
+  .loc-banner-sched {
+    background: var(--ts-cream-2);
+    border-radius: 10px;
+    padding: 12px 14px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    margin-bottom: 18px;
+  }
+  .loc-banner-sched-icon { color: var(--ts-teal); flex-shrink: 0; margin-top: 1px; }
+  .loc-banner-sched-name { font-size: 14px; color: var(--ts-ink); font-weight: 700; }
+  .loc-banner-sched-addr { font-size: 12px; color: var(--ts-ink-soft); margin-top: 1px; }
+
+  .cal-wrap {
+    background: #fff;
+    border-radius: 14px;
+    padding: 14px 14px 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .cal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    padding: 0 4px;
+  }
+  .cal-nav-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid var(--ts-line);
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ts-ink-soft);
+    cursor: pointer;
+  }
+  .cal-month {
+    font-family: var(--serif);
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--ts-navy-deep);
+    letter-spacing: -0.01em;
+  }
+  .cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    font-size: 13px;
+  }
+  .cal-dow {
+    text-align: center;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--ts-ink-muted);
+    text-transform: uppercase;
+    padding: 4px 0 8px;
+  }
+  .cal-day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+    color: var(--ts-ink);
+    border-radius: 8px;
+    border: 1px solid transparent;
+    cursor: pointer;
+  }
+  .cal-day.muted { color: var(--ts-ink-muted); opacity: 0.35; cursor: default; }
+  .cal-day.available { border-color: var(--ts-line); }
+  .cal-day.selected {
+    background: var(--ts-navy-deep);
+    color: #fff;
+    border-color: var(--ts-navy-deep);
+  }
+  .time-section-h {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ts-navy-deep);
+    margin: 0 0 14px;
+    text-align: center;
+  }
+  .time-slot-btn {
+    width: 100%;
+    padding: 15px 16px;
+    background: #fff;
+    border: 1px solid var(--ts-line);
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--ts-navy-deep);
+    margin-bottom: 9px;
+    font-family: var(--sans);
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+  }
+  .time-slot-btn.selected {
+    background: var(--ts-navy-deep);
+    color: #fff;
+    border-color: var(--ts-navy-deep);
+  }
+
+  /* ============ SCREEN 8: Review ============ */
+  .review-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 20px 20px 22px;
+    margin-bottom: 18px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .review-section-h {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ts-ink-muted);
+    margin-bottom: 6px;
+  }
+  .review-v {
+    font-family: var(--serif);
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--ts-navy-deep);
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+  }
+  .review-m { font-size: 12px; color: var(--ts-ink-soft); margin-top: 3px; }
+  .review-divider { height: 1px; background: var(--ts-line-soft); margin: 14px 0; }
+  .review-two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .review-v-sm {
+    font-family: var(--serif);
+    font-size: 14.5px;
+    font-weight: 500;
+    color: var(--ts-navy-deep);
+    line-height: 1.2;
+  }
+  .review-v-sm.green { color: var(--ts-success); }
+  .total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 18px 22px;
+    background: var(--ts-cream-2);
+    border-radius: 14px;
+    margin-bottom: 14px;
+  }
+  .total-label { font-size: 14px; color: var(--ts-ink-soft); font-weight: 500; }
+  .total-label-sub { font-size: 11px; color: var(--ts-ink-muted); margin-top: 2px; }
+  .total-val {
+    font-family: var(--serif);
+    font-size: 28px;
+    font-weight: 500;
+    color: var(--ts-navy-deep);
+    letter-spacing: -0.02em;
+  }
+  .total-val small { font-size: 14px; color: var(--ts-ink-muted); font-weight: 400; }
+
+  .checkbox-row {
+    background: #fff;
+    border-radius: 12px;
+    padding: 16px 18px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 20px;
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+  }
+  .checkbox {
+    width: 20px;
+    height: 20px;
+    border-radius: 5px;
+    border: 1.5px solid var(--ts-line);
+    background: #fff;
+    flex-shrink: 0;
+    margin-top: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+  }
+  .checkbox.checked { background: var(--ts-navy-deep); border-color: var(--ts-navy-deep); }
+  .checkbox-text-wrap { flex: 1; min-width: 0; }
+  .checkbox-text-main { font-size: 13px; color: var(--ts-ink); font-weight: 600; line-height: 1.3; }
+  .checkbox-text-sub { font-size: 11.5px; color: var(--ts-ink-muted); margin-top: 3px; line-height: 1.4; }
+
+  .apple-pay-btn {
+    width: 100%;
+    height: 54px;
+    background: var(--ts-navy-deep);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: -apple-system, system-ui, var(--sans);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .pay-method-line { font-size: 12px; color: var(--ts-ink-muted); text-align: center; margin-top: 10px; }
+
+  /* ============ SCREEN 9: Apple Pay sheet ============ */
+  .pay-sheet-bg {
+    flex: 1;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    background: #363636;
+    min-height: 0;
+    overflow-y: auto;
+  }
+  .pay-sheet {
+    position: relative;
+    background: #F6F5F0;
+    border-radius: 18px 18px 0 0;
+    padding: 18px 18px 24px;
+    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.2);
+    max-height: 100%;
+    overflow-y: auto;
+  }
+  .pay-sheet-handle {
+    width: 36px;
+    height: 4px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 2px;
+    margin: 0 auto 16px;
+  }
+  .pay-sheet-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .pay-sheet-head-left {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 17px;
+    font-weight: 500;
+    color: #000;
+  }
+  .pay-sheet-close {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  /* Wallet-style small card */
+  .pay-card-small {
+    background: linear-gradient(135deg, #0D2340 0%, #143860 100%);
+    border-radius: 12px;
+    padding: 14px 16px;
+    color: #fff;
+    margin-bottom: 14px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    position: relative;
+  }
+  .pay-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+  .pay-card-tag {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    color: rgba(255, 255, 255, 0.85);
+  }
+  .pay-card-chip {
+    width: 18px;
+    height: 14px;
+    background: linear-gradient(135deg, #D4A23A, #B6862A);
+    border-radius: 2px;
+    position: relative;
+  }
+  .pay-card-chip::before,
+  .pay-card-chip::after {
+    content: '';
+    position: absolute;
+    left: 2px;
+    right: 2px;
+    height: 1px;
+    background: rgba(0,0,0,0.25);
+  }
+  .pay-card-chip::before { top: 5px; }
+  .pay-card-chip::after { top: 9px; }
+  .pay-card-mid {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .pay-card-dots {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+  }
+  .pay-card-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.85);
+  }
+  .pay-card-group { display: flex; gap: 3px; }
+  .pay-card-last4 {
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    margin-left: 6px;
+  }
+  .pay-card-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 10px;
+  }
+  .pay-card-holder {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.95);
+    line-height: 1.3;
+  }
+  .pay-card-exp {
+    font-size: 9px;
+    color: rgba(255,255,255,0.65);
+    margin-top: 2px;
+    letter-spacing: 0.06em;
+  }
+  .pay-card-visa-svg {
+    height: 14px;
+    width: auto;
+  }
+
+  .pay-row {
+    background: #fff;
+    border-radius: 11px;
+    padding: 13px 16px;
+    margin-bottom: 7px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .pay-row-k { font-size: 14px; color: var(--ts-ink-soft); }
+  .pay-row-v { font-size: 14px; color: var(--ts-ink); font-weight: 500; }
+  .pay-row.total { padding: 14px 16px; margin-bottom: 16px; margin-top: 5px; }
+  .pay-row.total .pay-row-k-main { font-size: 14px; color: var(--ts-ink); font-weight: 600; }
+  .pay-row.total .pay-row-k-sub { font-size: 12px; color: var(--ts-ink-muted); margin-top: 1px; }
+  .pay-row.total .pay-row-v {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--ts-ink);
+  }
+
+  .pay-confirm-btn {
+    width: 100%;
+    background: var(--ts-navy-deep);
+    color: #fff;
+    padding: 14px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 500;
+    border: none;
+    font-family: -apple-system, system-ui, var(--sans);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+  }
+  .pay-faceid-line {
+    text-align: center;
+    font-size: 12px;
+    color: var(--ts-ink-soft);
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+  }
+
+  /* ============ SCREEN 10: Booked ============ */
+  .booked-check {
+    width: 68px;
+    height: 68px;
+    border-radius: 50%;
+    background: var(--ts-success);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 12px auto 16px;
+    flex-shrink: 0;
+    animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  @keyframes popIn {
+    0% { transform: scale(0); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .booked-h {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 28px;
+    color: var(--ts-navy-deep);
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    margin-bottom: 12px;
+    text-align: center;
+  }
+  .booked-sub {
+    font-size: 14px;
+    color: var(--ts-ink-soft);
+    line-height: 1.5;
+    max-width: 320px;
+    margin: 0 auto 30px;
+    text-align: center;
+  }
+  .booked-ticket {
+    background: #fff;
+    border-radius: 14px;
+    padding: 22px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .booked-section {
+    padding: 0 0 14px;
+    border-bottom: 1px dashed var(--ts-line);
+    margin-bottom: 14px;
+  }
+  .booked-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .booked-sec-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ts-ink-muted);
+    margin-bottom: 5px;
+  }
+  .booked-sec-val {
+    font-family: var(--serif);
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--ts-navy-deep);
+    letter-spacing: -0.01em;
+  }
+  .booked-sec-meta {
+    font-size: 12px;
+    color: var(--ts-ink-soft);
+    margin-top: 3px;
+  }
+  .booked-two {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .booked-val-sm {
+    font-family: var(--serif);
+    font-size: 14.5px;
+    font-weight: 500;
+    color: var(--ts-navy-deep);
+    line-height: 1.2;
+  }
+  .booked-val-sm.green { color: var(--ts-success); }
+  .booked-addcal {
+    width: 100%;
+    background: #fff;
+    border: 1px solid var(--ts-line);
+    border-radius: 12px;
+    padding: 15px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ts-navy-deep);
+    font-family: var(--sans);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    margin-bottom: 14px;
+  }
+
+  .restart-row {
+    text-align: center;
+    padding: 0 24px 20px;
+  }
+  .restart-btn {
+    background: transparent;
+    border: 1px solid var(--ts-line);
+    color: var(--ts-ink-muted);
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 10px 20px;
+    border-radius: 999px;
+    cursor: pointer;
+    margin: 6px auto 0;
+    display: block;
+  }
+
+</style>
+</head>
+<body>
+
+<!-- Reusable Nirvana pinwheel SVG definition (real logo shape) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- Nirvana mark: pinwheel flower with thin purple petals + navy center -->
+    <symbol id="nirvana-pinwheel" viewBox="0 0 40 40">
+      <g transform="translate(20 20)">
+        <!-- 8 thin elongated petals -->
+        <g fill="#9B86D9">
+          <ellipse cx="0" cy="-13" rx="2.2" ry="6" transform="rotate(0)"/>
+          <ellipse cx="0" cy="-13" rx="2.2" ry="6" transform="rotate(45)"/>
+          <ellipse cx="0" cy="-13" rx="2.2" ry="6" transform="rotate(90)"/>
+          <ellipse cx="0" cy="-13" rx="2.2" ry="6" transform="rotate(135)"/>
+          <ellipse cx="0" cy="-13" rx="2.2" ry="6" transform="rotate(180)"/>
+          <ellipse cx="0" cy="-13" rx="2.2" ry="6" transform="rotate(225)"/>
+          <ellipse cx="0" cy="-13" rx="2.2" ry="6" transform="rotate(270)"/>
+          <ellipse cx="0" cy="-13" rx="2.2" ry="6" transform="rotate(315)"/>
+        </g>
+        <!-- Navy dark center -->
+        <circle cx="0" cy="0" r="5" fill="#1A2A44"/>
+      </g>
+    </symbol>
+    <!-- Group XYZ mark: gold outer 3/4 ring + navy inner crescent -->
+    <symbol id="ts-logo-mark" viewBox="0 0 100 100">
+      <!-- Gold outer arc (roughly 3/4 circle, opening to the right) -->
+      <path d="M 75 22 A 36 36 0 1 0 75 78" fill="none" stroke="#D6A423" stroke-width="9" stroke-linecap="round"/>
+      <!-- Navy inner crescent moon -->
+      <path d="M 58 35 A 18 18 0 1 0 58 65 A 13 13 0 1 1 58 35 Z" fill="#0E3152"/>
+    </symbol>
+    <!-- Visa logo - clean wordmark -->
+    <symbol id="visa-logo" viewBox="0 0 60 20">
+      <text x="0" y="16" font-family="Arial Black, sans-serif" font-weight="900" font-style="italic" font-size="18" fill="#ffffff" letter-spacing="-0.5">VISA</text>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="app-root">
+
+  <!-- ============ PROGRESS BAR (outside phone) ============ -->
+  <div class="progress-wrap">
+    <button class="back-btn hidden" id="backBtn" aria-label="Back">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <div class="progress-label" id="progressLabel">Request appointment</div>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-count" id="progressCount">1 / 10</div>
+  </div>
+
+  <!-- ============ PHONE CHASSIS ============ -->
+  <div class="phone-chassis">
+    <div class="phone-island"></div>
+    <div class="phone-screen">
+      <div class="phone-status-bar">
+        <span>9:41</span>
+        <div class="phone-status-icons">
+          <svg width="16" height="10" viewBox="0 0 18 12" fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="0.5"/><rect x="5" y="5" width="3" height="7" rx="0.5"/><rect x="10" y="2" width="3" height="10" rx="0.5"/><rect x="15" y="0" width="3" height="12" rx="0.5"/></svg>
+          <svg width="15" height="10" viewBox="0 0 17 11" fill="none" stroke="currentColor" stroke-width="1"><rect x="1" y="1" width="13" height="9" rx="2.5"/><rect x="3" y="3" width="9" height="5" rx="1" fill="currentColor" stroke="none"/><rect x="15" y="4" width="1.5" height="3" rx="0.5" fill="currentColor" stroke="none"/></svg>
+        </div>
+      </div>
+
+      <!-- ============ INTRO ============ -->
+      <div class="intro" id="intro">
+        <div class="intro-logos">
+          <div class="nirvana-logo-img lg" role="img" aria-label="nirvana" style="height: 36px;"></div>
+        </div>
+
+        <h1 class="intro-h">Patient Intake Flow</h1>
+        <p class="intro-sub">
+          A walkthrough of how a first-time patient books a visit — powered by Nirvana.
+        </p>
+
+        <button class="intro-btn" id="startBtn">
+          Start walkthrough
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+
+
+  <!-- ============ SCREENS ============ -->
+  <div class="screen-stage" id="stage">
+
+
+    <!-- SCREEN 1: Homepage -->
+    <div class="screen active" id="s1">
+      <div class="browser-bar">
+        <div class="browser-dots"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
+        <div class="browser-url">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 12l5 5L20 7"/></svg>
+          groupxyz.com
+        </div>
+      </div>
+
+      <div class="page-body">
+        <div class="home-nav-top">
+          <div class="home-nav-top-left">
+            <span>For Providers</span>
+            <span>·</span>
+            <span>Member Resources</span>
+          </div>
+          <span>Sign In</span>
+        </div>
+
+        <div class="home-nav-main">
+          <div class="ts-logo-img small" role="img" aria-label="Group XYZ"></div>
+          <div class="tap-target" id="tap1" style="margin-left: auto;">
+            <div class="home-req-btn">Request An<br>Appointment</div>
+            <div class="tap-hint">TAP HERE</div>
+          </div>
+        </div>
+
+        <div class="home-hero">
+          <h1 class="home-hero-h">Care that meets you where you are.</h1>
+          <div class="home-hero-sub">Easy and affordable healthcare that meets you where you are.</div>
+          <div class="home-hero-rule"></div>
+          <div class="home-hero-stats">
+            <div>
+              <div class="home-hero-stat-num">24 hrs</div>
+              <div class="home-hero-stat-label">to first appointment</div>
+            </div>
+            <div>
+              <div class="home-hero-stat-num">99% In&#8209;network</div>
+              <div class="home-hero-stat-label">with insurance plans</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="home-ctas">
+          <div class="home-cta">Pay Your Bill</div>
+          <div class="home-cta">Care We Provide</div>
+          <div class="home-cta">Member Resources</div>
+        </div>
+
+        <div class="home-powered">
+          <span class="powered-label">Powered by</span>
+          <div class="nirvana-logo-img" role="img" aria-label="nirvana"></div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- SCREEN 2: Book your visit -->
+    <div class="screen" id="s2">
+      <div class="browser-bar">
+        <div class="browser-dots"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
+        <div class="browser-url">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 12l5 5L20 7"/></svg>
+          groupxyz.com/book
+        </div>
+      </div>
+      <div class="page-body">
+        <div class="page-header">
+          <div class="ts-logo-img" role="img" aria-label="Group XYZ"></div>
+        </div>
+        <div class="book-body">
+          <div class="step-label">Step 1 of 3</div>
+          <h1 class="page-h">Book your visit</h1>
+          <p class="page-sub">Enter your mobile number to get started. We'll text you a code to confirm it's you.</p>
+          <input class="input-field" type="text" value="+1 (214) 555-0182" readonly />
+          <div class="tap-target" id="tap2">
+            <button class="pri-btn">Continue</button>
+            <div class="tap-hint">TAP HERE</div>
+          </div>
+          <div class="fineprint">
+            By continuing, you agree to Group XYZ's <a href="javascript:void(0)">Terms of Service</a>, <a href="javascript:void(0)">Privacy Policy</a>, and <a href="javascript:void(0)">HIPAA Notice of Privacy Practices</a>. Message &amp; data rates may apply. Reply STOP to cancel.
+          </div>
+          <div class="signin-line">
+            Already a patient? <a href="javascript:void(0)">Sign in</a>
+          </div>
+        </div>
+        <div class="powered-bar with-border">
+          <span class="powered-label">Powered by</span>
+          <div class="nirvana-logo-img" role="img" aria-label="nirvana"></div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- SCREEN 3: Check your texts (with iMessage style autofill) -->
+    <div class="screen" id="s3">
+      <div class="browser-bar">
+        <div class="browser-dots"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
+        <div class="browser-url">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 12l5 5L20 7"/></svg>
+          groupxyz.com/book/verify
+        </div>
+      </div>
+      <div class="page-body">
+        <div class="page-header">
+          <div class="ts-logo-img" role="img" aria-label="Group XYZ"></div>
+        </div>
+        <div class="book-body">
+          <div class="step-label">Step 2 of 3</div>
+          <h1 class="page-h">Check your texts</h1>
+          <p class="page-sub">We sent a 6-digit code to <strong style="color: var(--ts-navy-deep); font-weight: 600;">+1 (214) 555-0182</strong></p>
+
+          <div class="otp-container">
+            <div class="otp-row" id="otpRow">
+              <div class="otp-box active" id="otp0">|</div>
+              <div class="otp-box" id="otp1"></div>
+              <div class="otp-box" id="otp2"></div>
+              <div class="otp-box" id="otp3"></div>
+              <div class="otp-box" id="otp4"></div>
+              <div class="otp-box" id="otp5"></div>
+            </div>
+
+            <!-- iMessage-style blue suggestion bubble (same as iOS autofill) -->
+            <div class="tap-target" id="tap3a" style="position: absolute; top: calc(100% - 2px); left: 0;">
+              <div class="imsg-bubble" id="imsgBubble">
+                <div class="imsg-line1">Fill code 492131</div>
+                <div class="imsg-line2">From Messages</div>
+              </div>
+              <div class="tap-hint" style="top: calc(100% + 12px);">TAP TO FILL</div>
+            </div>
+          </div>
+
+          <div style="height: 34px;"></div>
+
+          <div class="tap-target" id="tap3" style="opacity: 0.45; pointer-events: none;">
+            <button class="otp-continue-black inactive" id="otpContinue">Continue</button>
+            <div class="tap-hint" id="tap3Hint" style="opacity: 0;">TAP HERE</div>
+          </div>
+
+          <button class="sec-btn">Resend code</button>
+        </div>
+        <div class="powered-bar with-border">
+          <span class="powered-label">Powered by</span>
+          <div class="nirvana-logo-img" role="img" aria-label="nirvana"></div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- SCREEN 4: Is this you? -->
+    <div class="screen" id="s4">
+      <div class="browser-bar">
+        <div class="browser-dots"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
+        <div class="browser-url">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 12l5 5L20 7"/></svg>
+          groupxyz.com/book/confirm
+        </div>
+      </div>
+      <div class="page-body">
+        <div class="page-header">
+          <div class="ts-logo-img" role="img" aria-label="Group XYZ"></div>
+        </div>
+        <div class="book-body">
+          <div class="step-label">Step 3 of 3</div>
+          <h1 class="page-h">Is this you?</h1>
+          <p class="page-sub">Confirm your information below and what you're coming in for:</p>
+
+          <div class="id-card">
+            <div class="id-avatar">MA</div>
+            <div class="id-info-wrap">
+              <div class="id-info-name">Marcus Aurelius</div>
+              <div class="id-info-dob">DOB · November 11, 1991</div>
+            </div>
+            <div class="id-verified">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 12l5 5L20 7"/></svg>
+              Verified
+            </div>
+          </div>
+
+          <label class="field-label">What are you coming in for?</label>
+          <div class="select-box">
+            <span>45-min Therapy Consult</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+
+          <div class="referral-chip">
+            <div class="referral-chip-icon">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 22c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+            </div>
+            <div class="referral-chip-text">Provider: <strong>Dr. Patel</strong></div>
+          </div>
+
+          <div class="tap-target" id="tap4">
+            <button class="pri-btn">Confirm &amp; verify my insurance
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+            </button>
+            <div class="tap-hint">TAP HERE</div>
+          </div>
+        </div>
+        <div class="powered-bar with-border">
+          <span class="powered-label">Powered by</span>
+          <div class="nirvana-logo-img" role="img" aria-label="nirvana"></div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- SCREEN 5: Verifying -->
+    <div class="screen" id="s5">
+      <div class="browser-bar">
+        <div class="browser-dots"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
+        <div class="browser-url">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 12l5 5L20 7"/></svg>
+          groupxyz.com/book/coverage
+        </div>
+      </div>
+      <div class="page-body">
+        <div class="page-header">
+          <div class="ts-logo-img" role="img" aria-label="Group XYZ"></div>
+        </div>
+        <div class="verify-wrap">
+          <div class="verify-ring-wrap">
+            <div class="verify-ring"></div>
+            <div class="verify-ring-inner-img" role="img" aria-label="Group XYZ"></div>
+          </div>
+          <div class="verify-h">Checking your insurance</div>
+          <div class="verify-sub">Verifying your coverage status and visit cost.</div>
+        </div>
+        <div class="powered-bar">
+          <span class="powered-label">Powered by</span>
+          <div class="nirvana-logo-img" role="img" aria-label="nirvana"></div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- SCREEN 6: You're covered -->
+    <div class="screen" id="s6">
+      <div class="browser-bar">
+        <div class="browser-dots"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
+        <div class="browser-url">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 12l5 5L20 7"/></svg>
+          groupxyz.com/book/coverage
+        </div>
+      </div>
+      <div class="page-body">
+        <div class="page-header">
+          <div class="ts-logo-img" role="img" aria-label="Group XYZ"></div>
+        </div>
+        <div class="book-body">
+          <div class="cov-hero">
+            <div class="cov-badge"><span class="dot"></span>Verified · In-Network</div>
+            <h1 class="cov-h">You're <em>covered!</em></h1>
+            <div class="cov-sub">Here's what we found:</div>
+          </div>
+          <div class="info-card">
+            <div class="info-row">
+              <div class="info-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></div>
+              <div class="info-text">Your member ID is <strong>W584638564</strong></div>
+            </div>
+            <div class="info-row">
+              <div class="info-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/></svg></div>
+              <div class="info-text">Your <span class="info-label">copay</span> is <strong>$35</strong></div>
+            </div>
+            <div class="info-row">
+              <div class="info-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+              <div class="info-text-multi">
+                <div class="info-text">Your <span class="info-label">payer</span> is <strong>Aetna</strong></div>
+                <div class="info-text-sub">Commercial (Open Access POS)</div>
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
+              <div class="info-text">Your plan expires on <strong>12 / 31 / 2026</strong></div>
+            </div>
+          </div>
+
+          <div class="tap-target" id="tap6">
+            <button class="pri-btn">Confirm and schedule my visit
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+            </button>
+            <div class="tap-hint">TAP HERE</div>
+          </div>
+        </div>
+        <div class="powered-bar with-border">
+          <span class="powered-label">Powered by</span>
+          <div class="nirvana-logo-img" role="img" aria-label="nirvana"></div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- SCREEN 7: Pick a day and time -->
+    <div class="screen" id="s7">
+      <div class="browser-bar">
+        <div class="browser-dots"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
+        <div class="browser-url">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 12l5 5L20 7"/></svg>
+          groupxyz.com/book/schedule
+        </div>
+      </div>
+      <div class="page-body">
+        <div class="page-header">
+          <div class="ts-logo-img" role="img" aria-label="Group XYZ"></div>
+        </div>
+        <div class="book-body">
+          <h1 class="page-h" style="font-size: 26px; margin-bottom: 14px;">Pick a day and time</h1>
+
+          <div class="loc-banner-sched">
+            <svg class="loc-banner-sched-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            <div>
+              <div class="loc-banner-sched-name">Downtown Care Center</div>
+              <div class="loc-banner-sched-addr">500 Main St., Suite 200 · Your City, ST 00000</div>
+            </div>
+          </div>
+
+          <div class="cal-wrap">
+            <div class="cal-header">
+              <div class="cal-nav-btn">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
+              </div>
+              <div class="cal-month">April 2026</div>
+              <div class="cal-nav-btn">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
+              </div>
+            </div>
+            <div class="cal-grid" id="calGrid">
+              <div class="cal-dow">S</div><div class="cal-dow">M</div><div class="cal-dow">T</div><div class="cal-dow">W</div><div class="cal-dow">T</div><div class="cal-dow">F</div><div class="cal-dow">S</div>
+              <div class="cal-day muted">29</div><div class="cal-day muted">30</div><div class="cal-day muted">31</div><div class="cal-day muted">1</div><div class="cal-day muted">2</div><div class="cal-day muted">3</div><div class="cal-day muted">4</div>
+              <div class="cal-day muted">5</div><div class="cal-day muted">6</div><div class="cal-day muted">7</div><div class="cal-day muted">8</div><div class="cal-day muted">9</div><div class="cal-day muted">10</div><div class="cal-day muted">11</div>
+              <div class="cal-day muted">12</div><div class="cal-day muted">13</div><div class="cal-day muted">14</div><div class="cal-day muted">15</div><div class="cal-day muted">16</div><div class="cal-day muted">17</div><div class="cal-day muted">18</div>
+              <div class="cal-day muted">19</div><div class="cal-day muted">20</div><div class="cal-day muted">21</div>
+              <div class="cal-day available cal-pick" data-date="22" data-day="Wednesday, April 22" data-short="Wed · Apr 22">22</div>
+              <div class="cal-day selected cal-pick" data-date="23" data-day="Thursday, April 23" data-short="Thu · Apr 23">23</div>
+              <div class="cal-day available cal-pick" data-date="24" data-day="Friday, April 24" data-short="Fri · Apr 24">24</div>
+              <div class="cal-day available cal-pick" data-date="25" data-day="Saturday, April 25" data-short="Sat · Apr 25">25</div>
+              <div class="cal-day muted">26</div>
+              <div class="cal-day available cal-pick" data-date="27" data-day="Monday, April 27" data-short="Mon · Apr 27">27</div>
+              <div class="cal-day available cal-pick" data-date="28" data-day="Tuesday, April 28" data-short="Tue · Apr 28">28</div>
+              <div class="cal-day available cal-pick" data-date="29" data-day="Wednesday, April 29" data-short="Wed · Apr 29">29</div>
+              <div class="cal-day available cal-pick" data-date="30" data-day="Thursday, April 30" data-short="Thu · Apr 30">30</div>
+              <div class="cal-day muted">1</div><div class="cal-day muted">2</div>
+            </div>
+          </div>
+
+          <div class="time-section-h" id="timeHeader">Thursday, April 23</div>
+          <div id="timeSlots">
+            <button class="time-slot-btn" data-time="9:00 AM CST" data-full="9:00 AM – 9:45 AM CST">9:00 AM – 9:45 AM CST</button>
+            <button class="time-slot-btn selected" data-time="10:00 AM CST" data-full="10:00 AM – 10:45 AM CST">10:00 AM – 10:45 AM CST</button>
+            <button class="time-slot-btn" data-time="11:30 AM CST" data-full="11:30 AM – 12:15 PM CST">11:30 AM – 12:15 PM CST</button>
+            <button class="time-slot-btn" data-time="1:45 PM CST" data-full="1:45 PM – 2:30 PM CST">1:45 PM – 2:30 PM CST</button>
+            <button class="time-slot-btn" data-time="3:00 PM CST" data-full="3:00 PM – 3:45 PM CST">3:00 PM – 3:45 PM CST</button>
+          </div>
+
+          <div class="tap-target" id="tap7" style="margin-top: 18px;">
+            <button class="pri-btn">Schedule my visit
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+            </button>
+            <div class="tap-hint">TAP HERE</div>
+          </div>
+        </div>
+        <div class="powered-bar with-border">
+          <span class="powered-label">Powered by</span>
+          <div class="nirvana-logo-img" role="img" aria-label="nirvana"></div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- SCREEN 8: Review & pay -->
+    <div class="screen" id="s8">
+      <div class="browser-bar">
+        <div class="browser-dots"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
+        <div class="browser-url">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 12l5 5L20 7"/></svg>
+          groupxyz.com/book/review
+        </div>
+      </div>
+      <div class="page-body">
+        <div class="page-header">
+          <div class="ts-logo-img" role="img" aria-label="Group XYZ"></div>
+        </div>
+        <div class="book-body">
+          <h1 class="page-h" style="font-size: 28px; margin-bottom: 18px;">Review &amp; pay</h1>
+          <div class="review-card">
+            <div class="review-section-h">Appointment</div>
+            <div class="review-v">45-min Therapy Consult</div>
+            <div class="review-m" id="reviewApptTime">Thursday, April 23 · 10:00 AM CST · ~45 min</div>
+            <div class="review-divider"></div>
+            <div class="review-section-h">Patient</div>
+            <div class="review-v">Marcus Aurelius</div>
+            <div class="review-m">DOB 11/11/1991 · (214) 555-0182</div>
+            <div class="review-divider"></div>
+            <div class="review-two">
+              <div>
+                <div class="review-section-h">Plan</div>
+                <div class="review-v-sm">Aetna Open POS</div>
+                <div class="review-m">ID W584638564</div>
+              </div>
+              <div>
+                <div class="review-section-h">Status</div>
+                <div class="review-v-sm green">Active ✓</div>
+                <div class="review-m">Thru 12/31/2026</div>
+              </div>
+            </div>
+          </div>
+          <div class="total-row">
+            <div>
+              <div class="total-label">You owe today</div>
+              <div class="total-label-sub">Copay · due at booking</div>
+            </div>
+            <div class="total-val">$35<small>.00</small></div>
+          </div>
+          <div class="checkbox-row" id="saveToggle">
+            <div class="checkbox checked" id="checkbox">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 12l5 5L20 7"/></svg>
+            </div>
+            <div class="checkbox-text-wrap">
+              <div class="checkbox-text-main">Save my details to my Group XYZ account</div>
+              <div class="checkbox-text-sub">Faster check-in, visit history, and real-time coverage updates.</div>
+            </div>
+          </div>
+          <div class="tap-target" id="tap8">
+            <button class="apple-pay-btn">
+              <svg width="17" height="21" viewBox="0 0 20 24" fill="currentColor"><path d="M17.5 12.5c0-3.5 2.8-5.2 2.9-5.3-1.6-2.3-4.1-2.6-5-2.7-2.1-.2-4.1 1.2-5.2 1.2-1.1 0-2.7-1.2-4.5-1.2-2.3 0-4.4 1.3-5.6 3.4-2.4 4.1-.6 10.2 1.7 13.6 1.1 1.6 2.5 3.5 4.3 3.4 1.7-.1 2.4-1.1 4.5-1.1s2.7 1.1 4.5 1.1c1.9 0 3.1-1.6 4.2-3.3 1.3-1.9 1.9-3.7 1.9-3.8-.1 0-3.7-1.4-3.7-5.6zM14 2.5c.9-1.2 1.6-2.8 1.4-4.5-1.4.1-3 .9-4 2.1-.9 1-1.7 2.7-1.5 4.3 1.5.1 3.1-.8 4.1-1.9z"/></svg>
+              Pay
+            </button>
+            <div class="tap-hint">TAP HERE</div>
+          </div>
+        </div>
+        <div class="powered-bar with-border">
+          <span class="powered-label">Powered by</span>
+          <div class="nirvana-logo-img" role="img" aria-label="nirvana"></div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- SCREEN 9: Apple Pay sheet with SMALL card (wallet-style) -->
+    <div class="screen" id="s9">
+      <div class="browser-bar">
+        <div class="browser-dots"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
+        <div class="browser-url">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 12l5 5L20 7"/></svg>
+          groupxyz.com/book/review
+        </div>
+      </div>
+      <div class="pay-sheet-bg">
+        <div class="pay-sheet">
+          <div class="pay-sheet-handle"></div>
+          <div class="pay-sheet-head">
+            <div class="pay-sheet-head-left">
+              <svg width="16" height="20" viewBox="0 0 20 24" fill="currentColor"><path d="M17.5 12.5c0-3.5 2.8-5.2 2.9-5.3-1.6-2.3-4.1-2.6-5-2.7-2.1-.2-4.1 1.2-5.2 1.2-1.1 0-2.7-1.2-4.5-1.2-2.3 0-4.4 1.3-5.6 3.4-2.4 4.1-.6 10.2 1.7 13.6 1.1 1.6 2.5 3.5 4.3 3.4 1.7-.1 2.4-1.1 4.5-1.1s2.7 1.1 4.5 1.1c1.9 0 3.1-1.6 4.2-3.3 1.3-1.9 1.9-3.7 1.9-3.8-.1 0-3.7-1.4-3.7-5.6zM14 2.5c.9-1.2 1.6-2.8 1.4-4.5-1.4.1-3 .9-4 2.1-.9 1-1.7 2.7-1.5 4.3 1.5.1 3.1-.8 4.1-1.9z"/></svg>
+              Pay
+            </div>
+            <div class="pay-sheet-close">×</div>
+          </div>
+
+          <!-- Small wallet-style card -->
+          <div class="pay-card-small">
+            <div class="pay-card-top">
+              <span class="pay-card-tag">HSA · CHASE</span>
+              <div class="pay-card-chip"></div>
+            </div>
+            <div class="pay-card-mid">
+              <div class="pay-card-dots">
+                <div class="pay-card-group"><div class="pay-card-dot"></div><div class="pay-card-dot"></div><div class="pay-card-dot"></div><div class="pay-card-dot"></div></div>
+                <div class="pay-card-group"><div class="pay-card-dot"></div><div class="pay-card-dot"></div><div class="pay-card-dot"></div><div class="pay-card-dot"></div></div>
+                <div class="pay-card-group"><div class="pay-card-dot"></div><div class="pay-card-dot"></div><div class="pay-card-dot"></div><div class="pay-card-dot"></div></div>
+                <span class="pay-card-last4">4429</span>
+              </div>
+            </div>
+            <div class="pay-card-bottom">
+              <div>
+                <div class="pay-card-holder">M. Aurelius</div>
+                <div class="pay-card-exp">EXP 04/29</div>
+              </div>
+              <!-- Proper Visa wordmark in Visa blue-on-white with yellow underline style on dark card -->
+              <div style="display: flex; flex-direction: column; align-items: flex-end;">
+                <svg width="42" height="14" viewBox="0 0 100 32" xmlns="http://www.w3.org/2000/svg">
+                  <text x="0" y="26" font-family="Arial Black, Helvetica, sans-serif" font-weight="900" font-style="italic" font-size="28" fill="#ffffff" letter-spacing="-1">VISA</text>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="pay-row">
+            <div class="pay-row-k">Pay to</div>
+            <div class="pay-row-v">Group XYZ</div>
+          </div>
+          <div class="pay-row">
+            <div class="pay-row-k">Billing</div>
+            <div class="pay-row-v">(214) 555-0182</div>
+          </div>
+          <div class="pay-row total">
+            <div>
+              <div class="pay-row-k-main">Total</div>
+              <div class="pay-row-k-sub">USD</div>
+            </div>
+            <div class="pay-row-v">$35.00</div>
+          </div>
+
+          <div class="tap-target" id="tap9">
+            <button class="pay-confirm-btn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+              Double Click to Confirm
+            </button>
+            <div class="tap-hint">TAP HERE</div>
+          </div>
+          <div class="pay-faceid-line">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 9v2M16 9v2M9 15s1 2 3 2 3-2 3-2"/></svg>
+            Use Face ID to authenticate
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- SCREEN 10: Booked -->
+    <div class="screen" id="s10">
+      <div class="browser-bar">
+        <div class="browser-dots"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
+        <div class="browser-url">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 12l5 5L20 7"/></svg>
+          groupxyz.com/booked
+        </div>
+      </div>
+      <div class="page-body">
+        <div class="page-header">
+          <div class="ts-logo-img" role="img" aria-label="Group XYZ"></div>
+        </div>
+        <div class="book-body">
+          <div class="booked-check">
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 12l5 5L20 7"/></svg>
+          </div>
+          <h1 class="booked-h">You're all booked!</h1>
+          <p class="booked-sub" id="bookedSub">We sent a confirmation to (214) 555-0182. See you Thursday.</p>
+          <div class="booked-ticket">
+            <div class="booked-section">
+              <div class="booked-sec-label">Appointment</div>
+              <div class="booked-sec-val">45-min Therapy Consult</div>
+              <div class="booked-sec-meta" id="confirmAppt">Thu · Apr 23 · 10:00 AM CST</div>
+            </div>
+            <div class="booked-section">
+              <div class="booked-sec-label">Location</div>
+              <div class="booked-sec-val">Downtown Care Center</div>
+              <div class="booked-sec-meta">500 Main St., Suite 200 · Your City, ST 00000</div>
+            </div>
+            <div class="booked-section">
+              <div class="booked-two">
+                <div>
+                  <div class="booked-sec-label">Patient</div>
+                  <div class="booked-val-sm">Marcus A.</div>
+                  <div class="booked-sec-meta">DOB 11/11/91</div>
+                </div>
+                <div>
+                  <div class="booked-sec-label">Paid</div>
+                  <div class="booked-val-sm green">$35 ✓</div>
+                  <div class="booked-sec-meta">Apple Pay · Visa 4429</div>
+                </div>
+              </div>
+            </div>
+            <div class="booked-section">
+              <div class="booked-two">
+                <div>
+                  <div class="booked-sec-label">Plan</div>
+                  <div class="booked-val-sm">Aetna POS</div>
+                  <div class="booked-sec-meta">W584638564</div>
+                </div>
+                <div>
+                  <div class="booked-sec-label">Coverage</div>
+                  <div class="booked-val-sm green">Active ✓</div>
+                  <div class="booked-sec-meta">Thru 12/31/26</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <button class="booked-addcal">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+            Add to calendar
+          </button>
+          <button class="restart-btn" id="restartBtn">↻ Restart walkthrough</button>
+        </div>
+        <div class="powered-bar with-border">
+          <span class="powered-label">Powered by</span>
+          <div class="nirvana-logo-img" role="img" aria-label="nirvana"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Caption -->
+  <div class="caption-backdrop" id="captionBackdrop"></div>
+  <div class="caption" id="caption">
+    <div class="caption-handle" id="captionHandle"></div>
+    <div class="caption-step" id="captionStep">01 · Entry</div>
+    <div class="caption-body" id="captionBody">Patient lands on Group XYZ website and clicks "Request An Appointment".</div>
+    <div class="caption-progress"><div class="caption-progress-fill"></div></div>
+  </div>
+
+    </div><!-- /phone-screen -->
+  </div><!-- /phone-chassis -->
+</div><!-- /app-root -->
+
+
+<script>
+  // ============ TOUR CONFIG ============
+  const steps = [
+    { tapId: 'tap1', screenId: 's1',  step: '01 · Entry',                label: 'Request appointment',    body: 'Patient lands on Group XYZ website and clicks "Request An Appointment".' },
+    { tapId: 'tap2', screenId: 's2',  step: '02 · Enter phone',          label: 'Book your visit',         body: 'Patient enters phone number. No additional fields required.' },
+    { tapId: null,   screenId: 's3',  step: '03 · Verify',               label: 'Check your texts',       body: 'Standard 6-digit SMS verification. iOS autofills the code directly from Messages.' },
+    { tapId: 'tap4', screenId: 's4',  step: '04 · Confirm patient identity', label: 'Is this you?',       body: "Name and date of birth recovered from patient's phone number. Visit details pulled from your provider." },
+    { tapId: null,   screenId: 's5',  step: '05 · Running eligibility',  label: 'Checking insurance',     body: 'Nirvana verifies coverage.', auto: true },
+    { tapId: 'tap6', screenId: 's6',  step: '06 · Coverage verified',    label: "You're covered",         body: 'Patient insurance details confirmed before scheduling.' },
+    { tapId: 'tap7', screenId: 's7',  step: '07 · Schedule',             label: 'Pick a day and time',    body: 'Real-time available slots. The current flow requires a callback — this is self-serve.' },
+    { tapId: 'tap8', screenId: 's8',  step: '08 · Review & Pay',         label: 'Review & pay',           body: 'Payment collected upfront via Apple Pay. Consent to save patient details to an Group XYZ account is opt-in.' },
+    { tapId: 'tap9', screenId: 's9',  step: '09 · Confirm Payment',      label: 'Apple Pay',              body: 'Pay upfront with Apple Pay.' },
+    { tapId: null,   screenId: 's10', step: '10 · Booked',               label: "You're all booked",      body: 'Ticket-style confirmation with verified coverage and paid status — clean data flows directly into your RCM system.', final: true }
+  ];
+
+  const TOTAL_STEPS = steps.length;
+  let currentStep = 0;
+  let advanceTimer = null;
+  let captionDismissed = false;
+
+  // Shared state used across screens
+  const state = {
+    selectedDate: { date: 23, day: 'Thursday, April 23', short: 'Thu · Apr 23' },
+    selectedTime: { time: '10:00 AM CST', full: '10:00 AM – 10:45 AM CST' }
+  };
+
+  const $ = id => document.getElementById(id);
+
+  function showCaption(step) {
+    $('captionStep').textContent = step.step;
+    $('captionBody').textContent = step.body;
+    const caption = $('caption');
+    const backdrop = $('captionBackdrop');
+    caption.classList.remove('visible', 'minimized');
+    caption.querySelector('.caption-progress-fill').style.transition = 'none';
+    caption.querySelector('.caption-progress-fill').style.width = '0';
+    void caption.offsetWidth;
+    caption.querySelector('.caption-progress-fill').style.transition = '';
+    caption.classList.add('visible');
+    backdrop.classList.add('visible');
+    captionDismissed = false;
+  }
+
+  function hideCaption() {
+    $('caption').classList.remove('visible', 'minimized');
+    $('captionBackdrop').classList.remove('visible');
+  }
+
+  function minimizeCaption() {
+    $('caption').classList.add('minimized');
+    $('captionBackdrop').classList.remove('visible');
+  }
+
+  function updateBackButton() {
+    const back = $('backBtn');
+    if (currentStep > 0) back.classList.remove('hidden');
+    else back.classList.add('hidden');
+  }
+
+  function syncDatesToReviewAndConfirm() {
+    // Screen 8 review time
+    const reviewEl = $('reviewApptTime');
+    if (reviewEl) reviewEl.textContent = `${state.selectedDate.day} · ${state.selectedTime.time} · ~45 min`;
+    // Screen 10 confirmation
+    const confirmEl = $('confirmAppt');
+    if (confirmEl) confirmEl.textContent = `${state.selectedDate.short} · ${state.selectedTime.time}`;
+    // "See you Thursday" on screen 10
+    const bookedSub = $('bookedSub');
+    if (bookedSub) {
+      const dayName = state.selectedDate.day.split(',')[0];
+      bookedSub.textContent = `We sent a confirmation to (214) 555-0182. See you ${dayName}.`;
+    }
+  }
+
+  function goToStep(index) {
+    if (index >= TOTAL_STEPS || index < 0) return;
+    clearTimeout(advanceTimer);
+    currentStep = index;
+    const step = steps[index];
+
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    $(step.screenId).classList.add('active');
+    const newScreen = $(step.screenId);
+    if (newScreen) newScreen.scrollTop = 0;
+
+    $('progressLabel').textContent = step.label;
+    $('progressCount').textContent = (index + 1) + ' / ' + TOTAL_STEPS;
+    $('progressFill').style.width = ((index + 1) / TOTAL_STEPS * 100) + '%';
+
+    hideCaption();
+    updateBackButton();
+
+    // Sync data when landing on review or booked
+    if (step.screenId === 's8' || step.screenId === 's10') {
+      syncDatesToReviewAndConfirm();
+    }
+
+    // Reset OTP state if re-entering screen 3
+    if (step.screenId === 's3') resetOtpState();
+
+    if (step.auto) {
+      advanceTimer = setTimeout(() => {
+        showCaption(step);
+        advanceTimer = setTimeout(() => {
+          if (!captionDismissed) hideCaption();
+          setTimeout(() => goToStep(index + 1), 220);
+        }, 1200);
+      }, 600);
+    } else if (step.final) {
+      advanceTimer = setTimeout(() => showCaption(step), 700);
+    }
+  }
+
+  function handleTap(index) {
+    const step = steps[index];
+    showCaption(step);
+    clearTimeout(advanceTimer);
+    advanceTimer = setTimeout(() => {
+      if (captionDismissed) return;
+      hideCaption();
+      setTimeout(() => goToStep(index + 1), 220);
+    }, 1200);
+  }
+
+  function restart() {
+    clearTimeout(advanceTimer);
+    hideCaption();
+    state.selectedDate = { date: 23, day: 'Thursday, April 23', short: 'Thu · Apr 23' };
+    state.selectedTime = { time: '10:00 AM CST', full: '10:00 AM – 10:45 AM CST' };
+    syncDatesToReviewAndConfirm();
+    // Reset calendar visual
+    document.querySelectorAll('#calGrid .cal-day').forEach(d => d.classList.remove('selected'));
+    const defaultDay = document.querySelector('#calGrid .cal-day[data-date="23"]');
+    if (defaultDay) defaultDay.classList.add('selected');
+    $('timeHeader').textContent = 'Thursday, April 23';
+    document.querySelectorAll('.time-slot-btn').forEach(x => x.classList.remove('selected'));
+    const def10 = document.querySelector('.time-slot-btn[data-time="10:00 AM CST"]');
+    if (def10) def10.classList.add('selected');
+    goToStep(0);
+  }
+
+  // ============ OTP autofill state ============
+  function resetOtpState() {
+    for (let i = 0; i < 6; i++) {
+      const box = $('otp' + i);
+      if (box) {
+        box.textContent = i === 0 ? '|' : '';
+        box.classList.remove('filled');
+        if (i === 0) box.classList.add('active');
+        else box.classList.remove('active');
+      }
+    }
+    $('imsgBubble').classList.remove('hidden');
+    const tap3 = $('tap3');
+    if (tap3) {
+      tap3.style.opacity = '0.45';
+      tap3.style.pointerEvents = 'none';
+    }
+    const otpBtn = $('otpContinue');
+    if (otpBtn) otpBtn.classList.add('inactive');
+    const tap3Hint = $('tap3Hint');
+    if (tap3Hint) tap3Hint.style.opacity = '0';
+  }
+
+  function fillOtpCode() {
+    const code = '492131';
+    for (let i = 0; i < 6; i++) {
+      const box = $('otp' + i);
+      if (box) {
+        setTimeout(() => {
+          box.textContent = code[i];
+          box.classList.add('filled');
+          box.classList.remove('active');
+        }, i * 60);
+      }
+    }
+    // Hide message bubble, enable continue button after fill animation
+    setTimeout(() => {
+      $('imsgBubble').classList.add('hidden');
+      const tap3 = $('tap3');
+      if (tap3) {
+        tap3.style.opacity = '1';
+        tap3.style.pointerEvents = 'auto';
+      }
+      const otpBtn = $('otpContinue');
+      if (otpBtn) otpBtn.classList.remove('inactive');
+      const tap3Hint = $('tap3Hint');
+      if (tap3Hint) tap3Hint.style.opacity = '1';
+    }, 450);
+  }
+
+  // ============ Drag dismiss ============
+  let dragStartY = 0;
+  let dragging = false;
+  const captionEl = () => $('caption');
+
+  function onDragStart(e) {
+    dragging = true;
+    dragStartY = (e.touches ? e.touches[0].clientY : e.clientY);
+    captionEl().style.transition = 'none';
+  }
+  function onDragMove(e) {
+    if (!dragging) return;
+    const y = e.touches ? e.touches[0].clientY : e.clientY;
+    const delta = y - dragStartY;
+    if (delta > 0) captionEl().style.transform = `translateY(${delta}px)`;
+  }
+  function onDragEnd(e) {
+    if (!dragging) return;
+    dragging = false;
+    captionEl().style.transition = '';
+    captionEl().style.transform = '';
+    const y = e.changedTouches ? e.changedTouches[0].clientY : e.clientY;
+    const delta = y - dragStartY;
+    if (delta > 60) {
+      captionDismissed = true;
+      clearTimeout(advanceTimer);
+      minimizeCaption();
+    }
+  }
+
+  // ============ INIT ============
+  document.addEventListener('DOMContentLoaded', () => {
+    // Hook up tap targets
+    steps.forEach((step, index) => {
+      if (!step.tapId) return;
+      const el = $(step.tapId);
+      if (!el) return;
+      el.addEventListener('click', e => {
+        e.preventDefault();
+        e.stopPropagation();
+        handleTap(index);
+      });
+    });
+
+    // Special: screen 3 has TWO interactive steps
+    // 1. Tap iMessage bubble → fills code
+    // 2. Tap Continue → advances to screen 4
+    $('tap3a').addEventListener('click', e => {
+      e.preventDefault();
+      e.stopPropagation();
+      fillOtpCode();
+    });
+    $('tap3').addEventListener('click', e => {
+      e.preventDefault();
+      e.stopPropagation();
+      // Find the index of s3 in steps
+      const s3Index = steps.findIndex(s => s.screenId === 's3');
+      handleTap(s3Index);
+    });
+
+    // Start button
+    $('startBtn').addEventListener('click', () => {
+      $('intro').classList.add('hidden');
+      goToStep(0);
+    });
+
+    // Back button
+    $('backBtn').addEventListener('click', () => {
+      if (currentStep > 0) goToStep(currentStep - 1);
+    });
+
+    // Restart
+    $('restartBtn').addEventListener('click', restart);
+
+    // Caption drag
+    const handle = $('captionHandle');
+    handle.addEventListener('touchstart', onDragStart, { passive: true });
+    handle.addEventListener('touchmove', onDragMove, { passive: true });
+    handle.addEventListener('touchend', onDragEnd);
+    handle.addEventListener('mousedown', onDragStart);
+    window.addEventListener('mousemove', onDragMove);
+    window.addEventListener('mouseup', onDragEnd);
+
+    // Caption tap to reopen if minimized
+    $('caption').addEventListener('click', e => {
+      if ($('caption').classList.contains('minimized')) {
+        e.stopPropagation();
+        $('caption').classList.remove('minimized');
+        $('captionBackdrop').classList.add('visible');
+      }
+    });
+
+    // Backdrop tap to minimize
+    $('captionBackdrop').addEventListener('click', () => {
+      captionDismissed = true;
+      clearTimeout(advanceTimer);
+      minimizeCaption();
+    });
+
+    // Calendar day picker - updates state + time header
+    document.querySelectorAll('.cal-pick').forEach(d => {
+      d.addEventListener('click', () => {
+        document.querySelectorAll('#calGrid .cal-day').forEach(x => x.classList.remove('selected'));
+        d.classList.add('selected');
+        state.selectedDate = {
+          date: parseInt(d.dataset.date),
+          day: d.dataset.day,
+          short: d.dataset.short
+        };
+        $('timeHeader').textContent = d.dataset.day;
+      });
+    });
+
+    // Time slot picker
+    document.querySelectorAll('.time-slot-btn').forEach(b => {
+      b.addEventListener('click', () => {
+        document.querySelectorAll('.time-slot-btn').forEach(x => x.classList.remove('selected'));
+        b.classList.add('selected');
+        state.selectedTime = {
+          time: b.dataset.time,
+          full: b.dataset.full
+        };
+      });
+    });
+
+    // Checkbox toggle
+    const toggle = $('saveToggle');
+    if (toggle) {
+      toggle.addEventListener('click', () => {
+        const cb = $('checkbox');
+        cb.classList.toggle('checked');
+        if (cb.classList.contains('checked')) {
+          cb.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 12l5 5L20 7"/></svg>';
+        } else {
+          cb.innerHTML = '';
+        }
+      });
+    }
+  });
+</script>
+
+</body>
+</html>
